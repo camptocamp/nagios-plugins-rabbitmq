@@ -85,6 +85,11 @@ $p->add_arg(spec => 'ssl|ssl!',
     default => 0
 );
 
+$p->add_arg(spec => 'ssl_strict|ssl_strict!',
+    help => "Verify SSL certificate (default: true)",
+    default => 1
+);
+
 $p->add_arg(spec => 'proxy|proxy!',
     help => "Use environment proxy (default: true)",
     default => 1
@@ -126,6 +131,9 @@ $ua->credentials("$hostname:$port",
     "RabbitMQ Management", $p->opts->username, $p->opts->password);
 $ua->credentials("$hostname:$port",
     "Management: Web UI", $p->opts->username, $p->opts->password);
+if ($p->opts->ssl) {
+    $ua->ssl_opts(verify_hostname => $p->opts->ssl_strict);
+}
 my $req = HTTP::Request->new(GET => $url);
 my $res = $ua->request($req);
 
